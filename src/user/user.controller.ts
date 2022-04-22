@@ -1,3 +1,9 @@
+/*
+ * @Author: wuqianying
+ * @Date: 2022-04-02 23:55:04
+ * @LastEditors: wuqianying
+ * @LastEditTime: 2022-04-23 00:34:01
+ */
 import {
   Get,
   Post,
@@ -11,7 +17,7 @@ import {
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { UserService } from './user.service';
 import { UserRO } from './user.interface';
-import { CreateUserDto, UpdateUserDto, LoginUserDto } from './dto';
+import { CreateUserDto, LoginUserDto } from './dto';
 import { User } from './user.decorator';
 import { ValidationPipe } from '../shared/pipes/validation.pipe';
 
@@ -22,14 +28,6 @@ export class UserController {
   @Get('user')
   async findMe(@User('email') email: string): Promise<UserRO> {
     return await this.userService.findByEmail(email);
-  }
-
-  @Put('user')
-  async update(
-    @User('id') userId: number,
-    @Body('user') userData: UpdateUserDto,
-  ) {
-    return await this.userService.update(userId, userData);
   }
 
   @UsePipes(new ValidationPipe())

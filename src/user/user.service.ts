@@ -5,17 +5,39 @@ import { Repository, DeleteResult } from 'typeorm';
 import * as argon2 from 'argon2';
 import * as jwt from 'jsonwebtoken';
 import { validate } from 'class-validator';
+import { HttpService } from '@nestjs/axios';
+import { map } from 'rxjs/operators';
+
 import { JWT_SECRET } from '../config';
-import { UserRO } from './user.interface';
+import { WXLoginRO, UserRO } from './user.interface';
 import User from './user.entity';
-import { CreateUserDto, LoginUserDto, UpdateUserDto } from './dto';
+import { WXLoginDto, CreateUserDto, LoginUserDto } from './dto';
+import { APP_ID, APP_SECRET, GRANT_TYPE } from '../config';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly http: HttpService,
   ) {}
+
+  async loginWithCode(code: WXLoginDto) {
+    const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${APP_ID}&secret=${APP_SECRET}&js_code=${code}&grant_type=${GRANT_TYPE}`;
+    let res: WXLoginRO;
+    this.http
+      .get(url)
+      .pipe(map((axiosResponse) => axiosResponse.data))
+      .subscribe((data) => {
+        res = data;
+      });
+    if (!res.openid || !res.session_key || res.errcode) {
+      throw new HttpException({ message: res.errmsg }, HttpStatus.UNAUTHORIZED);
+    } else {
+      console.log('成功');
+      return res;
+    }
+  }
 
   async findAll(): Promise<User[]> {
     return await this.userRepository.find();
@@ -70,15 +92,6 @@ export class UserService {
       const savedUser = await this.userRepository.save(newUser);
       return this.buildUserRO(savedUser);
     }
-  }
-
-  async update(id: number, dto: UpdateUserDto): Promise<User> {
-    const toUpdate = await this.userRepository.findOneBy({ id });
-    delete toUpdate.password;
-    delete toUpdate.favorites;
-
-    const updated = Object.assign(toUpdate, dto);
-    return await this.userRepository.save(updated);
   }
 
   async delete(email: string): Promise<DeleteResult> {

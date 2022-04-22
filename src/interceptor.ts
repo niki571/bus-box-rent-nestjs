@@ -1,10 +1,8 @@
 /*
- * @Author: your name
+ * @Author: wuqianying
  * @Date: 2022-04-16 05:30:57
- * @LastEditTime: 2022-04-16 05:32:09
- * @LastEditors: Please set LastEditors
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * @FilePath: /bus-box-rent/src/interceptor.ts
+ * @LastEditTime: 2022-04-23 01:35:00
+ * @LastEditors: wuqianying
  */
 
 import {
