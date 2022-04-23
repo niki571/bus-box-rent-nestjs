@@ -6,12 +6,13 @@ import {
 } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 import User from './user.entity';
 import { UserService } from './user.service';
 import { AuthMiddleware } from './auth.middleware';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User]), HttpModule],
   providers: [UserService],
   controllers: [UserController],
   exports: [UserService],

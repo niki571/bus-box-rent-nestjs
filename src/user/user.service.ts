@@ -18,13 +18,13 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly http: HttpService,
+    private readonly httpService: HttpService,
   ) {}
 
   async wxlogin(code: WXLoginDto) {
     const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${APP_ID}&secret=${APP_SECRET}&js_code=${code}&grant_type=${GRANT_TYPE}`;
     let res: WXLoginRO;
-    this.http
+    this.httpService
       .get(url)
       .pipe(map((axiosResponse) => axiosResponse.data))
       .subscribe((data) => {
@@ -42,76 +42,76 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  async findOne({ email, password }: LoginUserDto): Promise<User> {
-    const user = await this.userRepository.findOneBy({ email });
-    if (!user) {
-      return null;
-    }
+  // async findOne({ email, password }: LoginUserDto): Promise<User> {
+  //   const user = await this.userRepository.findOneBy({ email });
+  //   if (!user) {
+  //     return null;
+  //   }
 
-    if (await argon2.verify(user.password, password)) {
-      return user;
-    }
+  //   if (await argon2.verify(user.password, password)) {
+  //     return user;
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 
-  async create(dto: CreateUserDto): Promise<UserRO> {
-    // check uniqueness of username/email
-    const { username, email, password } = dto;
-    const qb = await getRepository(User)
-      .createQueryBuilder('user')
-      .where('user.username = :username', { username })
-      .orWhere('user.email = :email', { email });
+  // async create(dto: CreateUserDto): Promise<UserRO> {
+  //   // check uniqueness of username/email
+  //   const { username, email, password } = dto;
+  //   const qb = await getRepository(User)
+  //     .createQueryBuilder('user')
+  //     .where('user.username = :username', { username })
+  //     .orWhere('user.email = :email', { email });
 
-    const user = await qb.getOne();
+  //   const user = await qb.getOne();
 
-    if (user) {
-      const errors = { username: 'Username and email must be unique.' };
-      throw new HttpException(
-        { message: 'Input data validation failed', errors },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+  //   if (user) {
+  //     const errors = { username: 'Username and email must be unique.' };
+  //     throw new HttpException(
+  //       { message: 'Input data validation failed', errors },
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   }
 
-    // create new user
-    const newUser = new User();
-    newUser.username = username;
-    newUser.email = email;
-    newUser.password = password;
-    newUser.articles = [];
+  //   // create new user
+  //   const newUser = new User();
+  //   newUser.username = username;
+  //   newUser.email = email;
+  //   newUser.password = password;
+  //   newUser.articles = [];
 
-    const errors = await validate(newUser);
-    if (errors.length > 0) {
-      const _errors = { username: 'Userinput is not valid.' };
-      throw new HttpException(
-        { message: 'Input data validation failed', _errors },
-        HttpStatus.BAD_REQUEST,
-      );
-    } else {
-      const savedUser = await this.userRepository.save(newUser);
-      return this.buildUserRO(savedUser);
-    }
-  }
+  //   const errors = await validate(newUser);
+  //   if (errors.length > 0) {
+  //     const _errors = { username: 'Userinput is not valid.' };
+  //     throw new HttpException(
+  //       { message: 'Input data validation failed', _errors },
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   } else {
+  //     const savedUser = await this.userRepository.save(newUser);
+  //     return this.buildUserRO(savedUser);
+  //   }
+  // }
 
-  async delete(email: string): Promise<DeleteResult> {
-    return await this.userRepository.delete({ email });
-  }
+  // async delete(email: string): Promise<DeleteResult> {
+  //   return await this.userRepository.delete({ email });
+  // }
 
-  async findById(id: number): Promise<UserRO> {
-    const user = await this.userRepository.findOneBy({ id });
+  // async findById(id: number): Promise<UserRO> {
+  //   const user = await this.userRepository.findOneBy({ id });
 
-    if (!user) {
-      const errors = { User: ' not found' };
-      throw new HttpException({ errors }, 401);
-    }
+  //   if (!user) {
+  //     const errors = { User: ' not found' };
+  //     throw new HttpException({ errors }, 401);
+  //   }
 
-    return this.buildUserRO(user);
-  }
+  //   return this.buildUserRO(user);
+  // }
 
-  async findByEmail(email: string): Promise<UserRO> {
-    const user = await this.userRepository.findOneBy({ email });
-    return this.buildUserRO(user);
-  }
+  // async findByEmail(email: string): Promise<UserRO> {
+  //   const user = await this.userRepository.findOneBy({ email });
+  //   return this.buildUserRO(user);
+  // }
 
   public generateJWT(user) {
     const today = new Date();
@@ -129,16 +129,16 @@ export class UserService {
     );
   }
 
-  private buildUserRO(user: User) {
-    const userRO = {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      bio: user.bio,
-      token: this.generateJWT(user),
-      image: user.image,
-    };
+  // private buildUserRO(user: User) {
+  //   const userRO = {
+  //     id: user.id,
+  //     username: user.username,
+  //     email: user.email,
+  //     bio: user.bio,
+  //     token: this.generateJWT(user),
+  //     image: user.image,
+  //   };
 
-    return { user: userRO };
-  }
+  //   return { user: userRO };
+  // }
 }
