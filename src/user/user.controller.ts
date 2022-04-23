@@ -2,7 +2,7 @@
  * @Author: wuqianying
  * @Date: 2022-04-02 23:55:04
  * @LastEditors: wuqianying
- * @LastEditTime: 2022-04-23 00:34:01
+ * @LastEditTime: 2022-04-23 10:33:05
  */
 import {
   Get,
@@ -17,13 +17,18 @@ import {
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { UserService } from './user.service';
 import { UserRO } from './user.interface';
-import { CreateUserDto, LoginUserDto } from './dto';
+import { WXLoginDto, CreateUserDto, LoginUserDto } from './dto';
 import { User } from './user.decorator';
 import { ValidationPipe } from '../shared/pipes/validation.pipe';
 
 @Controller()
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get('/user/phone')
+  async getPhone(params: WXLoginDto) {
+    return await this.userService.wxlogin(params);
+  }
 
   @Get('user')
   async findMe(@User('email') email: string): Promise<UserRO> {

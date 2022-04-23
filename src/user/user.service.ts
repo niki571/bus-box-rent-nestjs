@@ -8,11 +8,10 @@ import { validate } from 'class-validator';
 import { HttpService } from '@nestjs/axios';
 import { map } from 'rxjs/operators';
 
-import { JWT_SECRET } from '../config';
+import { JWT_SECRET, APP_ID, APP_SECRET, GRANT_TYPE } from '../config';
 import { WXLoginRO, UserRO } from './user.interface';
-import User from './user.entity';
 import { WXLoginDto, CreateUserDto, LoginUserDto } from './dto';
-import { APP_ID, APP_SECRET, GRANT_TYPE } from '../config';
+import User from './user.entity';
 
 @Injectable()
 export class UserService {
@@ -22,7 +21,7 @@ export class UserService {
     private readonly http: HttpService,
   ) {}
 
-  async loginWithCode(code: WXLoginDto) {
+  async wxlogin(code: WXLoginDto) {
     const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${APP_ID}&secret=${APP_SECRET}&js_code=${code}&grant_type=${GRANT_TYPE}`;
     let res: WXLoginRO;
     this.http
