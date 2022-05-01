@@ -2,16 +2,13 @@
  * @Author: wuqianying
  * @Date: 2022-04-15 15:16:13
  * @LastEditors: wuqianying
- * @LastEditTime: 2022-05-01 16:01:36
+ * @LastEditTime: 2022-05-01 21:02:54
  */
 import { Request } from 'express';
 
 export interface UserData {
-  username: string;
-  email: string;
+  phonenumber: string;
   token: string;
-  bio: string;
-  image?: string;
 }
 export interface Code2SessionRO {
   openid: string;

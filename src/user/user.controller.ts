@@ -2,7 +2,7 @@
  * @Author: wuqianying
  * @Date: 2022-04-02 23:55:04
  * @LastEditors: wuqianying
- * @LastEditTime: 2022-05-01 16:02:58
+ * @LastEditTime: 2022-05-01 20:56:00
  */
 import {
   Get,
@@ -14,12 +14,14 @@ import {
   Controller,
   UsePipes,
 } from '@nestjs/common';
-// import { HttpException } from '@nestjs/common/exceptions/http.exception';
+import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { UserService } from './user.service';
-import { UserRO } from './user.interface';
+import { APP_ID, APP_SECRET } from '../config';
 import { WXLoginDto, CreateUserDto } from './dto';
+import { Code2SessionRO } from './user.interface';
 import { User } from './user.decorator';
 import { ValidationPipe } from '../shared/pipes/validation.pipe';
+import WXCrypto from '../shared/utils/wxCrypto';
 
 @Controller('user')
 export class UserController {
@@ -27,7 +29,11 @@ export class UserController {
 
   @Post('phone')
   async getPhone(@Body() wxLoginDto: WXLoginDto) {
-    const session = await this.userService.wxlogin(wxLoginDto.code);
+    const { code, iv, encryptedData } = wxLoginDto;
+    const { openid, session_key } = await this.userService.getSessionKey(code);
+    const pc = new WXCrypto(APP_ID, session_key);
+    const data = pc.decryptData(encryptedData, iv);
+    console.log('解密后 data: ', data);
   }
 
   // @Get('user')

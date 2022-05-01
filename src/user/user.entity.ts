@@ -7,10 +7,10 @@ export default class User {
   id: number;
 
   @Column({ length: 20 })
-  name: string;
+  openid: string;
 
   @Column({ length: 11 })
-  phoneNumber: string;
+  phonenumber: string;
 
   @OneToMany(() => RentRecord, (rentRecord) => rentRecord.user)
   rentRecords: RentRecord[];
