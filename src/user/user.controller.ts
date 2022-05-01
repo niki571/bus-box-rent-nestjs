@@ -2,7 +2,7 @@
  * @Author: wuqianying
  * @Date: 2022-04-02 23:55:04
  * @LastEditors: wuqianying
- * @LastEditTime: 2022-04-23 17:07:28
+ * @LastEditTime: 2022-05-01 16:02:58
  */
 import {
   Get,
@@ -10,6 +10,7 @@ import {
   Body,
   Delete,
   Param,
+  Query,
   Controller,
   UsePipes,
 } from '@nestjs/common';
@@ -20,13 +21,13 @@ import { WXLoginDto, CreateUserDto } from './dto';
 import { User } from './user.decorator';
 import { ValidationPipe } from '../shared/pipes/validation.pipe';
 
-@Controller()
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('/user/phone')
-  async getPhone(params: WXLoginDto) {
-    return await this.userService.wxlogin(params);
+  @Post('phone')
+  async getPhone(@Body() wxLoginDto: WXLoginDto) {
+    const session = await this.userService.wxlogin(wxLoginDto.code);
   }
 
   // @Get('user')

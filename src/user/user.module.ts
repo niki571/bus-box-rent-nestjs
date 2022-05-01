@@ -1,3 +1,9 @@
+/*
+ * @Author: wuqianying
+ * @Date: 2022-04-02 23:54:46
+ * @LastEditors: wuqianying
+ * @LastEditTime: 2022-05-01 14:57:25
+ */
 import {
   MiddlewareConsumer,
   Module,
@@ -19,11 +25,11 @@ import { AuthMiddleware } from './auth.middleware';
 })
 export class UserModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthMiddleware)
-      .forRoutes(
-        { path: 'user', method: RequestMethod.GET },
-        { path: 'user', method: RequestMethod.PUT },
-      );
+    // consumer
+    //   .apply(AuthMiddleware)
+    //   .forRoutes(
+    //     { path: 'user', method: RequestMethod.GET },
+    //     { path: 'user', method: RequestMethod.PUT },
+    //   );
   }
 }

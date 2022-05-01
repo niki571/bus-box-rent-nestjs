@@ -2,15 +2,17 @@ import { Injectable, HttpStatus } from '@nestjs/common';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DeleteResult } from 'typeorm';
-import * as argon2 from 'argon2';
-import * as jwt from 'jsonwebtoken';
+
 import { validate } from 'class-validator';
 import { HttpService } from '@nestjs/axios';
 import { map } from 'rxjs/operators';
+import * as argon2 from 'argon2';
+import * as jwt from 'jsonwebtoken';
 
 import { JWT_SECRET, APP_ID, APP_SECRET, GRANT_TYPE } from '../config';
-import { WXLoginRO, UserRO } from './user.interface';
+import WXCrypto from '../shared/utils/wxCrypto';
 import { WXLoginDto, CreateUserDto, LoginUserDto } from './dto';
+import { Code2SessionRO, UserRO } from './user.interface';
 import User from './user.entity';
 
 @Injectable()
@@ -21,9 +23,9 @@ export class UserService {
     private readonly httpService: HttpService,
   ) {}
 
-  async wxlogin(code: WXLoginDto) {
+  async wxlogin(code: string) {
     const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${APP_ID}&secret=${APP_SECRET}&js_code=${code}&grant_type=${GRANT_TYPE}`;
-    let res: WXLoginRO;
+    let res: Code2SessionRO;
     this.httpService
       .get(url)
       .pipe(map((axiosResponse) => axiosResponse.data))

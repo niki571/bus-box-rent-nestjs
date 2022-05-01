@@ -1,3 +1,9 @@
+/*
+ * @Author: wuqianying
+ * @Date: 2022-04-15 15:16:13
+ * @LastEditors: wuqianying
+ * @LastEditTime: 2022-05-01 16:01:36
+ */
 import { Request } from 'express';
 
 export interface UserData {
@@ -7,10 +13,10 @@ export interface UserData {
   bio: string;
   image?: string;
 }
-export interface WXLoginRO {
+export interface Code2SessionRO {
   openid: string;
   session_key: string;
-  errcode: string;
+  errcode: number;
   errmsg: string;
 }
 export interface UserRO {
